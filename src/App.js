@@ -3,7 +3,7 @@ import logo from "./logo.svg";
 
 const CAL_STATES = {
   DEFAULT: {
-    screen: "",
+    screen: [],
     display: "0",
     prevInput: null,
     answer: 0,
@@ -51,12 +51,45 @@ class Calculator extends React.Component {
 
     this.calculate = this.calculate.bind(this);
     this.isValidNumber = this.isValidNumber.bind(this);
+    this.isOperation = this.isOperation.bind(this);
     this.updateScreen = this.updateScreen.bind(this);
   }
 
   updateScreen(state, input) {}
 
-  isValidNumber(state, input) {}
+  isOperation(e) {
+    if (/^(\+|\-|\*|\/)/.test(e)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  // Validates the current stored number with the new input element as a valid number
+  isValidNumber(state, input) {
+    let num = (state.display + input).split("");
+    let counter = 0;
+    let c = [];
+
+    if (state.display === "0" && input === ".") {
+      return "0" + input;
+    } else if (state.display === "0" && input !== ".") {
+      return input;
+    }
+
+    num.forEach((element) => {
+      if (element === ".") {
+        counter++;
+        if (counter < 2) {
+          c.push(element);
+        }
+      } else {
+        c.push(element);
+      }
+    });
+
+    return c.join().replace(/,/g, "");
+  }
 
   calculate(event) {
     let e = event.target.value;
@@ -68,6 +101,7 @@ class Calculator extends React.Component {
     } else {
       // handles numbers and decimals only
 
+      console.log(e);
       this.setState((state) => ({
         display: this.isValidNumber(state, e),
         prevInput: e,
