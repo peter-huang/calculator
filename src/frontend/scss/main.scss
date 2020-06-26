@@ -1,0 +1,110 @@
+// Mixin to prefix a property
+//// @author Hugo Giraudel
+//// @param {String} $property 			- Property name
+//// @param {*} $value 					    - Property value
+//// @param {List} $prefixes (())   - List of prefixes to print
+
+@mixin prefix($property, $value) {
+  $prefixes: webkit moz ms o;
+
+  @each $prefix in $prefixes {
+    #{'-' + $prefix + '-' + $property}: #{$value};
+  }
+  // Output standard non-prefixed declaration
+  #{$property}: #{$value};
+}
+
+@font-face {
+  font-family: orbitron;
+  src: url("./../resources/fonts/Orbitron-VariableFont_wght.ttf");
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: orbitron, "arial";
+  background-color: lightgrey;
+
+  background-color: #ff6500;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23dddddd' fill-opacity='0.23'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+#app {
+  border: 0px red solid;
+  height: 100%;
+}
+.credits {
+  color: #023e8a;
+  &:hover {
+    text-decoration: none;
+    color: #d00000;
+  }
+}
+
+#calculator {
+  border: 5px black solid;
+  background-color: lightgrey;
+
+  #screen,
+  #display {
+    border: 0px green solid;
+    background-color: black;
+    padding: 0.25em;
+    min-height: 2em;
+  }
+  #display {
+    color: white;
+    font-size: 1.25em;
+  }
+  #screen {
+    color: #ebc034;
+  }
+
+  #controls {
+    margin: 0em;
+
+    #clear {
+      background-color: #ebc034;
+      &:hover {
+        background-color: darken(#ebc034, 10%);
+      }
+    }
+    #add,
+    #subtract,
+    #multiply,
+    #divide {
+      background-color: #2e6dd1;
+      &:hover {
+        background-color: darken(#2e6dd1, 10%);
+      }
+    }
+    #equals {
+      background-color: #bf2121;
+      &:hover {
+        background-color: darken(#bf2121, 10%);
+      }
+    }
+    #left_bracket,
+    #right_bracket {
+      background-color: #bebebe;
+      &:hover {
+        background-color: darken(#bebebe, 5%);
+      }
+    }
+    .button {
+      background-color: #a0a0a0;
+      min-width: 2em;
+      margin: 0.5em 0em;
+      border: none;
+      border-radius: 0.25em;
+      font-weight: bold;
+      &:hover,
+      &:focus {
+        outline: none;
+        background-color: darken(#a0a0a0, 5%);
+      }
+    }
+  }
+}
