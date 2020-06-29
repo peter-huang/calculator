@@ -51,13 +51,73 @@ class Calculator extends React.Component {
 
     this.calculate = this.calculate.bind(this);
     this.isValidNumber = this.isValidNumber.bind(this);
-    this.isOperation = this.isOperation.bind(this);
+    this.isOperand = this.isOperand.bind(this);
+    this.cleanOperands = this.cleanOperands.bind(this);
     this.updateScreen = this.updateScreen.bind(this);
   }
 
-  updateScreen(state, input) {}
+  cleanOperands(ele, input) {
+    let screen = [...ele];
+    console.log(screen);
+    // clean using splice and traversing array backwards
+    let matched = "";
+    for (let i = screen.length - 1; i >= 0; i--) {
+      let e = screen[i];
 
-  isOperation(e) {
+      if (this.isOperand(e) && e === matched) {
+        screen.splice(i, 1);
+      }
+
+      if (this.isOperand(e)) {
+        matched = e;
+      }
+    }
+
+    console.log(screen);
+    return screen;
+  }
+
+  updateScreen(state, input) {
+    let screen = [...state.screen, state.display, input];
+    console.log(screen);
+
+    let x, y, z;
+
+    // screen has 3 or more entries
+    if (screen.length > 2) {
+      x = screen[screen.length - 3];
+      y = screen[screen.length - 2];
+      z = screen[screen.length - 1];
+      console.log(x + " " + y + " " + z);
+      console.log(screen);
+      // last element is same as input
+
+      if (this.isOperand(z) && this.isOperand(input)) {
+        if (y === z) {
+          //screen.pop();
+        }
+
+        if (y !== z) {
+          //screen.pop();
+          //screen.push(input);
+        }
+
+        if (this.isOperand(x)) {
+          //console.log("here");
+        }
+      }
+    }
+
+    // screen has only 2 or less entry
+    else {
+      screen.push(input);
+    }
+
+    return screen;
+  }
+
+  // Checks if input is a valid operand (true) or not (false)
+  isOperand(e) {
     if (/^(\+|\-|\*|\/)/.test(e)) {
       return true;
     }
@@ -75,6 +135,10 @@ class Calculator extends React.Component {
       return "0" + input;
     } else if (state.display === "0" && input !== ".") {
       return input;
+    } else if (this.isOperand(state.display) && input !== ".") {
+      return input;
+    } else if (this.isOperand(state.display) && input === ".") {
+      return "0" + input;
     }
 
     num.forEach((element) => {
@@ -96,12 +160,14 @@ class Calculator extends React.Component {
 
     if (e === "AC") {
       this.setState(CAL_STATES.DEFAULT);
-    } else if (e === "+" || e === "-" || e === "*" || e === "/") {
+    } else if (this.isOperand(e)) {
+      this.setState((state) => ({
+        screen: this.updateScreen(state, e),
+        prevInput: e,
+        display: e,
+      }));
     } else if (e === "=") {
     } else {
-      // handles numbers and decimals only
-
-      console.log(e);
       this.setState((state) => ({
         display: this.isValidNumber(state, e),
         prevInput: e,
