@@ -3,7 +3,7 @@ import logo from "./logo.svg";
 
 const CAL_STATES = {
   DEFAULT: {
-    screen: [],
+    screen: "",
     display: "0",
     prevInput: null,
     answer: 0,
@@ -77,45 +77,6 @@ class Calculator extends React.Component {
     return screen;
   }
 
-  updateScreen(state, input) {
-    let screen = [...state.screen, state.display, input];
-    console.log(screen);
-
-    let x, y, z;
-
-    // screen has 3 or more entries
-    if (screen.length > 2) {
-      x = screen[screen.length - 3];
-      y = screen[screen.length - 2];
-      z = screen[screen.length - 1];
-      console.log(x + " " + y + " " + z);
-      console.log(screen);
-      // last element is same as input
-
-      if (this.isOperand(z) && this.isOperand(input)) {
-        if (y === z) {
-          //screen.pop();
-        }
-
-        if (y !== z) {
-          //screen.pop();
-          //screen.push(input);
-        }
-
-        if (this.isOperand(x)) {
-          //console.log("here");
-        }
-      }
-    }
-
-    // screen has only 2 or less entry
-    else {
-      screen.push(input);
-    }
-
-    return screen;
-  }
-
   // Checks if input is a valid operand (true) or not (false)
   isOperand(e) {
     if (/^(\+|\-|\*|\/)/.test(e)) {
@@ -123,6 +84,63 @@ class Calculator extends React.Component {
     }
 
     return false;
+  }
+
+  updateScreen(state, data) {
+    let total;
+    let prevInput = state.prevInput;
+
+    // Initial upaate to screen
+    if (state.screen.length === 0 && !this.isOperand(prevInput)) {
+      total = state.screen + state.display;
+      //console.log("here1");
+    }
+
+    // Subsequent updates
+    else {
+      total = state.screen;
+
+      // Add Operands
+      if (this.isOperand(prevInput) && this.isOperand(data)) {
+        console.log("operands");
+
+        total += data;
+        // screen with more than 2 elements
+        if (total.length > 2) {
+          let x = total.substring(total.length - 3, total.length - 2);
+          let y = total.substring(total.length - 2, total.length - 1);
+          let z = total.substring(total.length - 1);
+
+          console.log("(" + x + ")(" + y + ")(" + z + ")");
+          if (this.isOperand(x) && this.isOperand(y) && this.isOperand(z)) {
+            console.log(
+              "operands3 " + total.substring(0, total.length - 3) + z
+            );
+            return total.substring(0, total.length - 3) + z;
+          }
+
+          if (this.isOperand(y) && this.isOperand(z) && z != "-") {
+            console.log(
+              "operands2 " + total.substring(0, total.length - 2) + z
+            );
+            return total.substring(0, total.length - 2) + z;
+          }
+        }
+
+        if (data !== "-") {
+          total = state.screen.substring(0, total.length - 1); // strip last element which is the duplicate operand
+        }
+
+        return total;
+      } // end of operands
+
+      // Add Number from display field
+      else {
+        total = state.screen + state.display;
+      }
+    }
+
+    return total + data;
   }
 
   // Validates the current stored number with the new input element as a valid number
@@ -161,17 +179,25 @@ class Calculator extends React.Component {
     if (e === "AC") {
       this.setState(CAL_STATES.DEFAULT);
     } else if (this.isOperand(e)) {
-      this.setState((state) => ({
-        screen: this.updateScreen(state, e),
-        prevInput: e,
-        display: e,
-      }));
+      this.setState((state) => {
+        let s = this.updateScreen(state, e);
+        return {
+          display: e,
+          prevInput: e,
+          screen: s,
+        };
+      });
     } else if (e === "=") {
     } else {
-      this.setState((state) => ({
-        display: this.isValidNumber(state, e),
-        prevInput: e,
-      }));
+      this.setState((state) => {
+        let n = this.isValidNumber(state, e);
+        //let s = this.updateScreen(state, n);
+        return {
+          display: n,
+          prevInput: e,
+          //screen: s,
+        };
+      });
     }
   }
 
