@@ -1,5 +1,9 @@
 import React from "react";
 import logo from "./logo.svg";
+import { create, all } from "mathjs";
+
+const config = {};
+const math = create(all, config);
 
 const CAL_STATES = {
   DEFAULT: {
@@ -50,6 +54,7 @@ class Calculator extends React.Component {
     this.state = CAL_STATES.DEFAULT;
 
     this.calculate = this.calculate.bind(this);
+    this.toggleEvent = this.toggleEvent.bind(this);
     this.isValidNumber = this.isValidNumber.bind(this);
     this.isOperand = this.isOperand.bind(this);
     this.cleanOperands = this.cleanOperands.bind(this);
@@ -115,7 +120,7 @@ class Calculator extends React.Component {
           }
 
           // check if last two are operands and last element does not equal to "-"
-          if (this.isOperand(y) && this.isOperand(z) && z != "-") {
+          if (this.isOperand(y) && this.isOperand(z) && z !== "-") {
             return total.substring(0, total.length - 2) + z;
           }
 
@@ -123,8 +128,8 @@ class Calculator extends React.Component {
           else if (
             this.isOperand(y) &&
             this.isOperand(z) &&
-            z == "-" &&
-            y == "-"
+            z === "-" &&
+            y === "-"
           ) {
             return total.substring(0, total.length - 2) + z;
           }
@@ -186,7 +191,7 @@ class Calculator extends React.Component {
   }
 
   // Event Handler
-  calculate(event) {
+  toggleEvent(event) {
     let e = event.target.value;
 
     // Reset
@@ -234,9 +239,9 @@ class Calculator extends React.Component {
           }
         }
         total = arr.join().replace(/,/g, "");
-        answer = Math.round(eval(total) * 1000000) / 1000000;
+        answer = Math.round(math.evaluate(total) * 1000000) / 1000000;
       } else {
-        answer = Math.round(eval(total) * 1000000) / 1000000;
+        answer = Math.round(math.evaluate(total) * 1000000) / 1000000;
       }
 
       this.setState((state) => {
@@ -259,6 +264,70 @@ class Calculator extends React.Component {
         };
       });
     }
+  }
+
+  // Calculate function (non working with negative numbers: 5*-5)
+  calculate(input) {
+    //let input = "3.75+-2.25*2";
+    //input = "3+5*6-2/4";
+    //input = "5*-5";
+
+    let answer = 0;
+    let numIndex = 0;
+    let opFound = 0;
+    let num = [];
+    let opp = [];
+
+    // parse expression
+    for (let i = 0; i < input.length; i++) {
+      let e = input[i];
+
+      // operands
+      if (isNaN(parseInt(e)) && (e !== ".") & this.isOperand(e)) {
+        //console.log(e);
+        opp.push(e);
+
+        opFound++;
+        if (opFound === 1) {
+          numIndex++;
+        }
+      }
+      // numbers
+      else {
+        if (num[numIndex] === undefined) {
+          num[numIndex] = e;
+        } else {
+          num[numIndex] += e;
+        }
+
+        opFound = 0;
+      }
+    }
+
+    // calculate expression
+    answer = parseFloat(num[0]);
+    for (let i = 0; i < opp.length; i++) {
+      let n = parseFloat(num[i + 1]);
+      if (!isNaN(n)) {
+        switch (opp[i]) {
+          case "+":
+            answer += n;
+            break;
+          case "-":
+            answer -= n;
+            break;
+          case "*":
+            answer *= n;
+            break;
+          case "/":
+            answer /= n;
+            break;
+        }
+      }
+      //console.log("answer: " + answer + " " + opp[i]);
+    }
+
+    return answer;
   }
 
   render() {
@@ -287,7 +356,7 @@ class Calculator extends React.Component {
           <div class="d-none col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="left_bracket"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center w-100"
               value="("
             >
@@ -297,7 +366,7 @@ class Calculator extends React.Component {
           <div class="d-none col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="right_bracket"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center w-100"
               value=")"
             >
@@ -307,7 +376,7 @@ class Calculator extends React.Component {
           <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
             <button
               id="clear"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center w-100"
               value="AC"
             >
@@ -320,7 +389,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="seven"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="7"
             >
@@ -331,7 +400,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="eight"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="8"
             >
@@ -342,7 +411,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="nine"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="9"
             >
@@ -353,7 +422,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="divide"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="/"
             >
@@ -366,7 +435,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="four"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="4"
             >
@@ -377,7 +446,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="five"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="5"
             >
@@ -388,7 +457,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="six"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="6"
             >
@@ -399,7 +468,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="multiply"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="*"
             >
@@ -412,7 +481,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="one"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="1"
             >
@@ -423,7 +492,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="two"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="2"
             >
@@ -434,7 +503,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="three"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="3"
             >
@@ -445,7 +514,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="subtract"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="-"
             >
@@ -458,7 +527,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="zero"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="0"
             >
@@ -469,7 +538,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="decimal"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="."
             >
@@ -480,7 +549,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="equals"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="="
             >
@@ -491,7 +560,7 @@ class Calculator extends React.Component {
           <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
             <button
               id="add"
-              onClick={this.calculate}
+              onClick={this.toggleEvent}
               class="button text-center"
               value="+"
             >
