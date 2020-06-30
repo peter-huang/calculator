@@ -102,41 +102,39 @@ class Calculator extends React.Component {
 
       // Add Operands
       if (this.isOperand(prevInput) && this.isOperand(data)) {
-        console.log("operands");
-
         total += data;
+
         // screen with more than 2 elements
         if (total.length > 2) {
+          // last three elements in screen
           let x = total.substring(total.length - 3, total.length - 2);
           let y = total.substring(total.length - 2, total.length - 1);
           let z = total.substring(total.length - 1);
 
-          console.log("(" + x + ")(" + y + ")(" + z + ")");
+          // check if all three operands are present
           if (this.isOperand(x) && this.isOperand(y) && this.isOperand(z)) {
-            console.log("op3 " + total.substring(0, total.length - 3) + z);
             return total.substring(0, total.length - 3) + z;
           }
 
+          // check if last two are operands and last element does not equal to "-"
           if (this.isOperand(y) && this.isOperand(z) && z != "-") {
-            console.log(
-              "op2 other  " + total.substring(0, total.length - 2) + z
-            );
             return total.substring(0, total.length - 2) + z;
-          } else if (
+          }
+
+          // check if last two are operands and are BOTH "-" (special case)
+          else if (
             this.isOperand(y) &&
             this.isOperand(z) &&
             z == "-" &&
             y == "-"
           ) {
-            console.log(
-              "op2 subtract  " + total.substring(0, total.length - 2) + z
-            );
             return total.substring(0, total.length - 2) + z;
           }
         }
 
+        // strip last element which is the duplicate operand
         if (data !== "-") {
-          total = state.screen.substring(0, total.length - 1); // strip last element which is the duplicate operand
+          total = state.screen.substring(0, total.length - 1);
         }
 
         return total;
