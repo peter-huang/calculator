@@ -1,12 +1,14 @@
 # Random Quote Machine
 
-A React application that [to be filled] freecodecamp frontend development curriculum. I can use any mix of HTML, JavaScript, CSS, Bootstrap, SASS, React, Redux, and jQuery to complete this project.
+A React calculator application completed for the freecodecamp frontend development curriculum. I can use any mix of HTML, JavaScript, CSS, Bootstrap, SASS, React, Redux, and jQuery to complete this project.
 
 **Final Project:** [https://peterhuang.net/projects/calculator/](https://peterhuang.net/projects/calculator/)
 
-**User Story #1:** [to be filled]
+**User Story #1:** Add, subtract, multiple, and divide functionality.
 
-**User Story #2:** [to be filled]
+**User Story #2:** Handle duplicate operand error handling.
+
+**User Story #3:** Allow precision ast least to 4 decimal places.
 
 ## Getting Started
 

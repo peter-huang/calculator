@@ -58,7 +58,7 @@ class Calculator extends React.Component {
 
   cleanOperands(ele, input) {
     let screen = [...ele];
-    console.log(screen);
+
     // clean using splice and traversing array backwards
     let matched = "";
     for (let i = screen.length - 1; i >= 0; i--) {
@@ -73,7 +73,6 @@ class Calculator extends React.Component {
       }
     }
 
-    console.log(screen);
     return screen;
   }
 
@@ -93,7 +92,6 @@ class Calculator extends React.Component {
     // Initial upaate to screen
     if (state.screen.length === 0 && !this.isOperand(prevInput)) {
       total = state.screen + state.display;
-      //console.log("here1");
     }
 
     // Subsequent updates
@@ -140,9 +138,17 @@ class Calculator extends React.Component {
         return total;
       } // end of operands
 
-      // Add Number from display field
+      // Add Number + Additoinal operations from display field
       else {
-        total = state.screen + state.display;
+        // Add from previous answer
+        if (prevInput === "=" && state.answer === 0) {
+          total = state.screen;
+        }
+
+        // Add Numbers
+        else {
+          total = state.screen + state.display;
+        }
       }
     }
 
@@ -179,22 +185,72 @@ class Calculator extends React.Component {
     return c.join().replace(/,/g, "");
   }
 
+  // Event Handler
   calculate(event) {
     let e = event.target.value;
 
+    // Reset
     if (e === "AC") {
       this.setState(CAL_STATES.DEFAULT);
-    } else if (this.isOperand(e)) {
+    }
+
+    // Operand handling
+    else if (this.isOperand(e)) {
       this.setState((state) => {
         let s = this.updateScreen(state, e);
+
+        // Add previous answer subsequently
+        if (state.answer !== 0) {
+          return {
+            display: e,
+            prevInput: e,
+            screen: state.answer + e,
+          };
+        }
+
+        // Operand handling
         return {
           display: e,
           prevInput: e,
           screen: s,
         };
       });
-    } else if (e === "=") {
-    } else {
+    }
+
+    // Calculation handling
+    else if (e === "=") {
+      // grab from both display and screen
+      let total = this.state.screen + this.state.display;
+      let answer;
+
+      if (total.length > 1) {
+        // break string into elements, and traverse backwards, and remove last element until number is reached
+        let arr = total.split("");
+        for (let i = arr.length - 1; i >= 0; i--) {
+          if (this.isOperand(arr[i])) {
+            arr.pop();
+          } else {
+            break;
+          }
+        }
+        total = arr.join().replace(/,/g, "");
+        answer = Math.round(eval(total) * 1000000) / 1000000;
+      } else {
+        answer = Math.round(eval(total) * 1000000) / 1000000;
+      }
+
+      this.setState((state) => {
+        return {
+          display: answer,
+          prevInput: e,
+          screen: total + e + answer,
+          answer: state.answer + answer,
+        };
+      });
+    }
+
+    // Number handling
+    else {
       this.setState((state) => {
         let n = this.isValidNumber(state, e);
         return {
