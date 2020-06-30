@@ -113,15 +113,23 @@ class Calculator extends React.Component {
 
           console.log("(" + x + ")(" + y + ")(" + z + ")");
           if (this.isOperand(x) && this.isOperand(y) && this.isOperand(z)) {
-            console.log(
-              "operands3 " + total.substring(0, total.length - 3) + z
-            );
+            console.log("op3 " + total.substring(0, total.length - 3) + z);
             return total.substring(0, total.length - 3) + z;
           }
 
           if (this.isOperand(y) && this.isOperand(z) && z != "-") {
             console.log(
-              "operands2 " + total.substring(0, total.length - 2) + z
+              "op2 other  " + total.substring(0, total.length - 2) + z
+            );
+            return total.substring(0, total.length - 2) + z;
+          } else if (
+            this.isOperand(y) &&
+            this.isOperand(z) &&
+            z == "-" &&
+            y == "-"
+          ) {
+            console.log(
+              "op2 subtract  " + total.substring(0, total.length - 2) + z
             );
             return total.substring(0, total.length - 2) + z;
           }
@@ -191,11 +199,9 @@ class Calculator extends React.Component {
     } else {
       this.setState((state) => {
         let n = this.isValidNumber(state, e);
-        //let s = this.updateScreen(state, n);
         return {
           display: n,
           prevInput: e,
-          //screen: s,
         };
       });
     }
