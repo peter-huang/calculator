@@ -8,7 +8,7 @@ A React calculator application completed for the freecodecamp frontend developme
 
 **User Story #2:** Handle duplicate operand error handling.
 
-**User Story #3:** Allow precision ast least to 4 decimal places.
+**User Story #3:** Allow precision to at least to 4 decimal places.
 
 ## Getting Started
 
