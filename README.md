@@ -1,4 +1,4 @@
-# Random Quote Machine
+# Calculator
 
 A React calculator application completed for the freecodecamp frontend development curriculum. I can use any mix of HTML, JavaScript, CSS, Bootstrap, SASS, React, Redux, and jQuery to complete this project.
 
